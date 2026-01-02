@@ -1,0 +1,113 @@
+# data
+feeder: feeder.feeder_ntu.Feeder
+pretrain_feeder_args:
+  data_path: ./data/ntu120/NTU120_XSub.npz
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 120
+  normalization: False
+  random_rot: True
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+  occlude: False #True
+
+lep_train_feeder_args:
+  data_path: ./data/ntu120/NTU120_XSub.npz
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 120
+  normalization: False
+  random_rot: True
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+  occlude: False #True
+
+lep_val_feeder_args:
+  data_path: ./data/ntu120/NTU120_XSub.npz
+  split: test
+  debug: False
+  window_size: 120
+  p_interval: [0.95]
+  vel: False
+  bone: False
+  occlude: False #True
+
+# model
+model: model.sscoordtransformer.SegmentedSplineCoordTransformerVel2
+model_args:
+  # Head, Chest, L Bicep, L Forearm, L Hand, R Bicep, R Forearm, R Hand, Pelvis, L Leg and R Leg
+  #
+  segments: [[2, 3], [2, 20], [4, 20], [4, 5], [5, 6], [6, 7], [7, 21], [7, 22], [8, 20], [8, 9], [9, 10], [10, 11], [11, 23], [11, 24], [1, 20], [0, 1], [0, 12], [12, 13], [13, 14], [14, 15], [0, 16], [16, 17], [17, 18], [18, 19]]
+  #segments: [[2, 3, 4, 8, 20], [1, 4, 8, 20], [4, 5, 20], [5, 6, 7], [6, 7, 21], [6, 7, 22], [8, 9, 20], [9, 10, 11], [10, 11, 23], [10, 11, 24], [0, 1, 12, 16], [0, 12, 13, 14, 15], [0, 16, 17, 18, 19]]
+  #segments: [[2, 3, 4, 8, 20], [1, 4, 8, 12, 16],[5, 6, 7, 21, 22], [9, 10, 11, 23, 24], [4, 5, 20], [5, 6, 7], [8, 9, 20], [9, 10, 11], [0, 1, 12, 16], [0, 12, 13, 14, 15], [0, 16, 17, 18, 19]]
+# [[1, 2, 3, 4, 8, 20], [0, 1, 4, 8, 12, 16],[4, 5, 6, 7, 21, 22], [8, 9, 10, 11, 23, 24], [0, 1, 12, 13, 14, 15], [0, 1, 16, 17, 18, 19]]
+  #segments: [[2, 3, 4, 8], [1, 4, 8, 20], [1, 4, 5, 20], [4, 5, 6, 7], [6, 7, 21, 22], [1, 8, 9, 20], [8, 9, 10, 11], [10, 11, 23, 24], [0, 1, 12, 16], [12, 13, 14, 15], [16, 17, 18, 19]]
+  d_model: 256
+  num_heads: 8
+  num_layers_enc: 8
+  num_layers_dec: 2
+  d_ff: 1024
+  max_seq_length: 15
+  dropout: 0.
+  t_m: 8
+  body_avg: False
+
+work_dir: ./output_dir/ntu120_xsub/base_8f/
+
+# pretraining
+batch_size_pretrain: 128
+epochs_pretrain: 400
+warmup_epochs: 20
+base_lr_pretrain: 0.001
+eta_min_pretrain: 5e-4
+weight_decay_pretrain: 0.05
+mask_ratio: 0.8
+
+weights_transformer_path: ./output_dir/ntu120_xsub/base_8f/final_weights/weights.pt # ./output_dir/ntu_xsub/final_weights/weights.pt
+
+# lep
+batch_size_lep: 64
+epochs_lep: 100
+base_lr_lep: 0.1
+weight_decay_lep: 0.
+num_classes: 120
+labels: [
+    "drink water", "eat meal", "brush teeth", "brush hair",
+    "drop", "pick up", "throw", "sit down",
+    "stand up", "clapping", "reading", "writing",
+    "tear up paper", "put on jacket", "take off jacket", "put on a shoe",
+    "take off a shoe", "put on glasses", "take off glasses", "put on a hat/cap",
+    "take off a hat/cap", "cheer up", "hand waving", "kicking something",
+    "reach into pocket", "hopping", "jump up", "phone call",
+    "play with phone/tablet", "type on a keyboard", "point to something", "taking a selfie",
+    "check time (from watch)", "rub two hands", "nod head/bow", "shake head",
+    "wipe face", "salute", "put palms together", "cross hands in front",
+    "sneeze/cough", "staggering", "falling down", "headache",
+    "chest pain", "back pain", "neck pain", "nausea/vomiting",
+    "fan self", "punch/slap", "kicking", "pushing",
+    "pat on back", "point finger", "hugging", "giving object",
+    "touch pocket", "shaking hands", "walking towards", "walking apart",
+    "put on headphone", "take off headphone", "shoot at basket", "bounce ball",
+    "tennis bat swing", "juggle table tennis ball", "hush", "flick hair",
+    "thumb up", "thumb down", "make OK sign", "make victory sign",
+    "staple book", "counting money", "cutting nails", "cutting paper",
+    "snap fingers", "open bottle", "sniff/smell", "squat down",
+    "toss a coin", "fold paper", "ball up paper", "play magic cube",
+    "apply cream on face", "apply cream on hand", "put on bag", "take off bag",
+    "put object into bag", "take object out of bag", "open a box", "move heavy objects",
+    "shake fist", "throw up cap/hat", "capitulate", "cross arms",
+    "arm circles", "arm swings", "run on the spot", "butt kicks",
+    "cross toe touch", "side kick", "yawn", "stretch oneself",
+    "blow nose", "hit with object", "wield knife", "knock over",
+    "grab stuff", "shoot with gun", "step on foot", "high-five",
+    "cheers and drink", "carry object", "take a photo", "follow",
+    "whisper", "exchange things", "support somebody", "rock-paper-scissors"
+    ]

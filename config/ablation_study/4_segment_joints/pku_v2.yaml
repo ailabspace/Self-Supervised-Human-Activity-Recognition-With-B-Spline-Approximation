@@ -1,0 +1,77 @@
+# data
+feeder: feeder.feeder_ntu.Feeder
+pretrain_feeder_args:
+  data_path: data/pku_v2/PKUv2_XSub.npz
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 120
+  normalization: False
+  random_rot: True
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+  occlude: False #True
+
+lep_train_feeder_args:
+  data_path: data/pku_v2/PKUv2_XSub.npz
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 120
+  normalization: False
+  random_rot: True
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+  occlude: False #True
+
+lep_val_feeder_args:
+  data_path: data/pku_v2/PKUv2_XSub.npz
+  split: test
+  debug: False
+  window_size: 120
+  p_interval: [0.95]
+  vel: False
+  bone: False
+  occlude: False #True
+
+# model
+model: model.sscoordtransformer.SegmentedSplineCoordTransformerVel2
+model_args:
+  # Head, Chest, Spine, L Bicep, L Forearm, L Fingers, L Thumb, L Palm, R Bicep, R Forearm, R Fingers, R Thumb, R Palm, Pelvis, L Thigh, L Knee Foot, R Thigh and R Knee Foot
+  segments: [ [ 2, 3, 4, 8 ], [ 1, 4, 8, 20 ], [ 1, 4, 5, 20 ], [ 4, 5, 6, 7 ], [ 6, 7, 21, 22 ], [ 1, 8, 9, 20 ], [ 8, 9, 10, 11 ], [ 10, 11, 23, 24 ], [ 0, 1, 12, 16 ], [ 12, 13, 14, 15 ], [ 16, 17, 18, 19 ] ]
+  d_model: 256
+  num_heads: 8
+  num_layers_enc: 8
+  num_layers_dec: 2
+  d_ff: 1024
+  max_seq_length: 8
+  dropout: 0.
+  t_m: 15
+  body_avg: False
+  #per_joints: True
+
+work_dir: ./output_dir/4_seg_j/pku_v2/
+
+# pretraining
+batch_size_pretrain: 128
+epochs_pretrain: 400
+warmup_epochs: 20
+base_lr_pretrain: 0.001
+eta_min_pretrain: 5e-4
+weight_decay_pretrain: 0.05
+mask_ratio: 0.8
+
+weights_transformer_path: ./output_dir/4_seg_j/pku_v2/final_weights/weights.pt # ./output_dir/ntu_xsub/final_weights/weights.pt
+
+# lep
+batch_size_lep: 64
+epochs_lep: 100
+base_lr_lep: 0.1
+weight_decay_lep: 0.
+num_classes: 60
