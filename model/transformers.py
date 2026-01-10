@@ -1,26 +1,10 @@
-import math
-import os
-
-import random
-
-#from ..feeder.feeder_ntu import Feeder
-
 import torch
 import torch.nn as nn
-from torch.utils.tensorboard import SummaryWriter
 
-import numpy as np
-
-from collections import OrderedDict, defaultdict
-# from feeder.feeder_ntu import Feeder
-from copy import deepcopy
-from tqdm import tqdm, trange
-
-from .TransformerEncoder import EncoderLayer, EncoderLayerST
+from .TransformerEncoder import EncoderLayer
 from .SkeleEmbed import *
 from .operations import *
 
-writer = SummaryWriter()
 
 def _no_grad_trunc_normal_(tensor, mean, std, a, b):
     # Cut & paste from PyTorch official master until it's in a few official releases - RW
@@ -83,7 +67,7 @@ class PairedCoordsTransformer(nn.Module):
         super(PairedCoordsTransformer, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key=len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key=len)), t_m)
         self.window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.window_enc, std=.02)
         self.segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -231,12 +215,12 @@ class PairedCoordsTransformer(nn.Module):
             return x
 
 # Coords to Spline
-class SegmentedSplineCoordTransformerVel2(nn.Module):
+class MPSCP(nn.Module):
     def __init__(self, segments, d_model, num_heads, num_layers_enc, num_layers_dec, d_ff, max_seq_length, dropout, t_m = 5, mask_mode = "random", loss_weight = 1, body_avg = True):
-        super(SegmentedSplineCoordTransformerVel2, self).__init__()
+        super(MPSCP, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
         self.window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.window_enc, std=.02)
         self.segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -408,7 +392,7 @@ class PairedSplineTransformerVel2(nn.Module):
         super(PairedSplineTransformerVel2, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3*4*(t_m-3)*2, d_model, len(max(segments, key = len)), 1)
+        self.cnn_projector = CNNProjector(3 * 4 * (t_m - 3) * 2, d_model, len(max(segments, key = len)), 1)
         self.window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.window_enc, std=.02)
         self.segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -576,7 +560,7 @@ class PairedSplineCoordsTransformerVel2(nn.Module):
         super(PairedSplineCoordsTransformerVel2, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3*4*(t_m-3)*2, d_model, len(max(segments, key = len)), 1)
+        self.cnn_projector = CNNProjector(3 * 4 * (t_m - 3) * 2, d_model, len(max(segments, key = len)), 1)
         self.window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.window_enc, std=.02)
         self.segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -737,7 +721,7 @@ class CoordTransformerBaseNoPE(nn.Module):
         super(CoordTransformerBaseNoPE, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
 
         self.enc_layers = nn.ModuleList(
             [EncoderLayer(d_model, num_heads, d_ff, dropout) for _ in range(int(num_layers_enc))])
@@ -827,7 +811,7 @@ class CoordTransformerBase(nn.Module):
         super(CoordTransformerBase, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
         self.window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.window_enc, std=.02)
         self.segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -921,7 +905,7 @@ class CoordTransformerBaseDecPE(nn.Module):
         super(CoordTransformerBaseDecPE, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
         self.dec_window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.dec_window_enc, std=.02)
         self.dec_segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -1015,7 +999,7 @@ class CoordTransformerBaseEncPE(nn.Module):
         super(CoordTransformerBaseEncPE, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
         self.enc_window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.enc_window_enc, std=.02)
         self.enc_segment_enc = nn.Parameter(torch.rand(1, len(segments), 1, d_model))
@@ -1108,12 +1092,12 @@ class CoordTransformerBaseEncPE(nn.Module):
 
 
 # Coords to Spline Encoder PE +
-class SegmentedSplineCoordTransformerVel2EncPE(nn.Module):
+class MPSCPEncPE(nn.Module):
     def __init__(self, segments, d_model, num_heads, num_layers_enc, num_layers_dec, d_ff, max_seq_length, dropout, t_m = 5, mask_mode = "random", loss_weight = 1, body_avg = True):
-        super(SegmentedSplineCoordTransformerVel2EncPE, self).__init__()
+        super(MPSCPEncPE, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
 
         self.enc_window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.enc_window_enc, std=.02)
@@ -1289,12 +1273,12 @@ class SegmentedSplineCoordTransformerVel2EncPE(nn.Module):
 
             return x
 
-class SegmentedSplineCoordTransformerVel2EncPEOnly(nn.Module):
+class MPSCPEncPEOnly(nn.Module):
     def __init__(self, segments, d_model, num_heads, num_layers_enc, num_layers_dec, d_ff, max_seq_length, dropout, t_m = 5, mask_mode = "random", loss_weight = 1, body_avg = True):
-        super(SegmentedSplineCoordTransformerVel2EncPEOnly, self).__init__()
+        super(MPSCPEncPEOnly, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
 
         self.enc_window_enc = nn.Parameter(torch.rand(1, 1, max_seq_length, d_model))
         trunc_normal_(self.enc_window_enc, std=.02)
@@ -1464,12 +1448,12 @@ class SegmentedSplineCoordTransformerVel2EncPEOnly(nn.Module):
             return x
 
 
-class SegmentedSplineCoordTransformerVel2NoPE(nn.Module):
+class MPSCP2NoPE(nn.Module):
     def __init__(self, segments, d_model, num_heads, num_layers_enc, num_layers_dec, d_ff, max_seq_length, dropout, t_m = 5, mask_mode = "random", loss_weight = 1, body_avg = True):
-        super(SegmentedSplineCoordTransformerVel2NoPE, self).__init__()
+        super(MPSCP2NoPE, self).__init__()
         self.t_m = t_m
 
-        self.cnn_projector = SpatialEmbedderJustCNN(3, d_model, len(max(segments, key = len)), t_m)
+        self.cnn_projector = CNNProjector(3, d_model, len(max(segments, key = len)), t_m)
 
         self.enc_layers = nn.ModuleList(
             [EncoderLayer(d_model, num_heads, d_ff, dropout) for _ in range(int(num_layers_enc))])
