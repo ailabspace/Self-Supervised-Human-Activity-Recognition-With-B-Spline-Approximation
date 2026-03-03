@@ -134,9 +134,9 @@ def get_raw_skes_data():
         pickle.dump(frames_drop_skes, fw, pickle.HIGHEST_PROTOCOL)
 
 if __name__ == '__main__':
-    save_path = '/'
+    save_path = './'
 
-    skes_path = '/Clustering/data/nturgbd_raw/nturgb+d_skeletons/'
+    skes_path = '../nturgbd_raw/nturgb+d_skeletons/'
     stat_path = osp.join(save_path, 'statistics')
     if not osp.exists('./raw_data'):
         os.makedirs('./raw_data')
