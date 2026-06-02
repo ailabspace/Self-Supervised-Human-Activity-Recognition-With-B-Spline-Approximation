@@ -5,10 +5,9 @@ import os.path as osp
 import numpy as np
 import pickle
 import logging
-import h5py
 from sklearn.model_selection import train_test_split
 
-root_path = '/'
+root_path = './'
 stat_path = osp.join(root_path, 'statistics')
 setup_file = osp.join(stat_path, 'setup.txt')
 camera_file = osp.join(stat_path, 'camera.txt')
@@ -21,7 +20,7 @@ denoised_path = osp.join(root_path, 'denoised_data')
 raw_skes_joints_pkl = osp.join(denoised_path, 'raw_denoised_joints.pkl')
 frames_file = osp.join(denoised_path, 'frames_cnt.txt')
 
-save_path = '/'
+save_path = './'
 
 
 if not osp.exists(save_path):
@@ -171,24 +170,6 @@ def split_dataset(skes_joints, label, performer, setup, evaluation, save_path):
     save_name = 'NTU120_%s.npz' % evaluation
     np.savez(save_name, x_train=train_x, y_train=train_y, x_test=test_x, y_test=test_y)
 
-    # # Save data into a .h5 file
-    # h5file = h5py.File(osp.join(save_path, 'NTU_%s.h5' % (evaluation)), 'w')
-    # # Training set
-    # h5file.create_dataset('x', data=skes_joints[train_indices])
-    # train_one_hot_labels = one_hot_vector(train_labels)
-    # h5file.create_dataset('y', data=train_one_hot_labels)
-    # # Validation set
-    # h5file.create_dataset('valid_x', data=skes_joints[val_indices])
-    # val_one_hot_labels = one_hot_vector(val_labels)
-    # h5file.create_dataset('valid_y', data=val_one_hot_labels)
-    # # Test set
-    # h5file.create_dataset('test_x', data=skes_joints[test_indices])
-    # test_one_hot_labels = one_hot_vector(test_labels)
-    # h5file.create_dataset('test_y', data=test_one_hot_labels)
-
-    # h5file.close()
-
-
 def get_indices(performer, setup, evaluation='XSub'):
     test_indices = np.empty(0)
     train_indices = np.empty(0)
@@ -203,12 +184,12 @@ def get_indices(performer, setup, evaluation='XSub'):
         # Get indices of test data
         for idx in test_ids:
             temp = np.where(performer == idx)[0]  # 0-based index
-            test_indices = np.hstack((test_indices, temp)).astype(np.int)
+            test_indices = np.hstack((test_indices, temp)).astype(int)
 
         # Get indices of training data
         for train_id in train_ids:
             temp = np.where(performer == train_id)[0]  # 0-based index
-            train_indices = np.hstack((train_indices, temp)).astype(np.int)
+            train_indices = np.hstack((train_indices, temp)).astype(int)
     else:  # Cross Setup (Setup IDs)
         train_ids = [i for i in range(1, 33) if i % 2 == 0]  # Even setup
         test_ids = [i for i in range(1, 33) if i % 2 == 1]  # Odd setup
@@ -216,22 +197,22 @@ def get_indices(performer, setup, evaluation='XSub'):
         # Get indices of test data
         for test_id in test_ids:
             temp = np.where(setup == test_id)[0]  # 0-based index
-            test_indices = np.hstack((test_indices, temp)).astype(np.int)
+            test_indices = np.hstack((test_indices, temp)).astype(int)
 
         # Get indices of training data
         for train_id in train_ids:
             temp = np.where(setup == train_id)[0]  # 0-based index
-            train_indices = np.hstack((train_indices, temp)).astype(np.int)
+            train_indices = np.hstack((train_indices, temp)).astype(int)
 
     return train_indices, test_indices
 
 
 if __name__ == '__main__':
-    setup = np.loadtxt(setup_file, dtype=np.int)  # camera id: 1~32
-    performer = np.loadtxt(performer_file, dtype=np.int)  # subject id: 1~106
-    label = np.loadtxt(label_file, dtype=np.int) - 1  # action label: 0~119
+    setup = np.loadtxt(setup_file, dtype=int)  # camera id: 1~32
+    performer = np.loadtxt(performer_file, dtype=int)  # subject id: 1~106
+    label = np.loadtxt(label_file, dtype=int) - 1  # action label: 0~119
 
-    frames_cnt = np.loadtxt(frames_file, dtype=np.int)  # frames_cnt
+    frames_cnt = np.loadtxt(frames_file, dtype=int)  # frames_cnt
     skes_name = np.loadtxt(skes_name_file, dtype=np.string_)
 
     with open(raw_skes_joints_pkl, 'rb') as fr:
