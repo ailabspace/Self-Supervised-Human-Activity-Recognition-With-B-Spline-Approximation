@@ -125,7 +125,7 @@ python pku_gendata.py
 The general command for training can be seen  below:
 
 ```bash
-python main.py --config ./config/base/{config}.yaml --seed {seed} --work-dir {work_dir} --weights-transformer-path {work_dir + final_weights/weights.pt} --train {train} --train-lep {train-lep}
+python main.py --config ./config/{path-to-config}/{config}.yaml --seed {seed} --work-dir {work_dir} --weights-transformer-path {work_dir + final_weights/weights.pt} --train {train} --train-lep {train-lep}
 ```
 
 where:
