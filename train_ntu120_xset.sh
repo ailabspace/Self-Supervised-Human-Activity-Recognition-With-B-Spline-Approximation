@@ -1,0 +1,5 @@
+python main.py --config ./config/base/ntu120_xset.yaml --seed 2021 --work-dir ./output_dir/ntu120_xset/runs/1/ --weights-transformer-path ./output_dir/ntu120_xset/runs/1/final_weights/weights.pt;
+python main.py --config ./config/base/ntu120_xset.yaml --seed 2022 --work-dir ./output_dir/ntu120_xset/runs/2/ --weights-transformer-path ./output_dir/ntu120_xset/runs/2/final_weights/weights.pt;
+python main.py --config ./config/base/ntu120_xset.yaml --seed 2023 --work-dir ./output_dir/ntu120_xset/runs/3/ --weights-transformer-path ./output_dir/ntu120_xset/runs/3/final_weights/weights.pt;
+python main.py --config ./config/base/ntu120_xset.yaml --seed 2024 --work-dir ./output_dir/ntu120_xset/runs/4/ --weights-transformer-path ./output_dir/ntu120_xset/runs/4/final_weights/weights.pt;
+python main.py --config ./config/base/ntu120_xset.yaml --seed 2025 --work-dir ./output_dir/ntu120_xset/runs/5/ --weights-transformer-path ./output_dir/ntu120_xset/runs/5/final_weights/weights.pt;

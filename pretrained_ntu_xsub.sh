@@ -1,0 +1,5 @@
+python main.py --config ./config/base/ntu_xsub.yaml --seed 2021 --work-dir ./output_dir/ntu_xsub/runs/1/ --weights-transformer-path ./weights_pretrained/base/ntu_xsub/weights.pt --train False;
+python main.py --config ./config/base/ntu_xsub.yaml --seed 2022 --work-dir ./output_dir/ntu_xsub/runs/2/ --weights-transformer-path ./weights_pretrained/base/ntu_xsub/weights.pt --train False;
+python main.py --config ./config/base/ntu_xsub.yaml --seed 2023 --work-dir ./output_dir/ntu_xsub/runs/3/ --weights-transformer-path ./weights_pretrained/base/ntu_xsub/weights.pt --train False;
+python main.py --config ./config/base/ntu_xsub.yaml --seed 2024 --work-dir ./output_dir/ntu_xsub/runs/4/ --weights-transformer-path ./weights_pretrained/base/ntu_xsub/weights.pt --train False;
+python main.py --config ./config/base/ntu_xsub.yaml --seed 2025 --work-dir ./output_dir/ntu_xsub/runs/5/ --weights-transformer-path ./weights_pretrained/base/ntu_xsub/weights.pt --train False;

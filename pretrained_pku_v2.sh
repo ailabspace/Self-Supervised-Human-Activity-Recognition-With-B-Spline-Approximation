@@ -1,0 +1,5 @@
+python main.py --config ./config/base/pku_v2.yaml --seed 2021 --work-dir ./output_dir/pku_v2/runs/1/ --weights-transformer-path ./weights_pretrained/base/pku_v2/weights.pt --train False;
+python main.py --config ./config/base/pku_v2.yaml --seed 2022 --work-dir ./output_dir/pku_v2/runs/2/ --weights-transformer-path ./weights_pretrained/base/pku_v2/weights.pt --train False;
+python main.py --config ./config/base/pku_v2.yaml --seed 2023 --work-dir ./output_dir/pku_v2/runs/3/ --weights-transformer-path ./weights_pretrained/base/pku_v2/weights.pt --train False;
+python main.py --config ./config/base/pku_v2.yaml --seed 2024 --work-dir ./output_dir/pku_v2/runs/4/ --weights-transformer-path ./weights_pretrained/base/pku_v2/weights.pt --train False;
+python main.py --config ./config/base/pku_v2.yaml --seed 2025 --work-dir ./output_dir/pku_v2/runs/5/ --weights-transformer-path ./weights_pretrained/base/pku_v2/weights.pt --train False;
