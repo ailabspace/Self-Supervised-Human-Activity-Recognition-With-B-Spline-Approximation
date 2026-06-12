@@ -1,0 +1,1 @@
+python main.py --config ./config/base/ntu_xsub.yaml --seed 2025 --work-dir ./output_dir/ntu_xsub/runs/5/ --weights-transformer-path ./output_dir/ntu_xsub/runs/5/final_weights/weights.pt;

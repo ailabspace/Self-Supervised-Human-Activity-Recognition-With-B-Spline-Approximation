@@ -1091,7 +1091,7 @@ class CoordTransformerBaseEncPE(nn.Module):
         return x
 
 
-# Coords to Spline Encoder PE +
+# Coords to Spline Encoder PE + Decoder PE
 class MPSCPEncPE(nn.Module):
     def __init__(self, segments, d_model, num_heads, num_layers_enc, num_layers_dec, d_ff, max_seq_length, dropout, t_m = 5, mask_mode = "random", loss_weight = 1, body_avg = True):
         super(MPSCPEncPE, self).__init__()

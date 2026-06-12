@@ -25,13 +25,14 @@ pip install -r requirements.txt
 
 Download the packages manually needed in the <strong>Requirements</strong> section.
 
-<h2> Requirements </h2>
+<h2> Minimum Requirements </h2>
+
+<h3> For non RTX 5090 </h3>
 
 ```bash
 python==3.8.19
 pyyaml==6.0.3
 numpy==1.24.4
-einops==0.8.1
 scikit-learn==1.3.2
 matplotlib==3.7.5
 seaborn==0.13.2
@@ -39,6 +40,21 @@ torch==2.4.1
 torchvision==0.19.1
 tensorboard==2.14.0
 tqdm==4.67.1
+```
+
+<h3> For RTX 5090 </h3>
+
+```bash
+python==3.10.20
+pyyaml==6.0.3
+matplotlib==3.10.9
+numpy==2.2.6
+seaborn==0.13.2
+scikit-learn=1.7.2
+tensorboard==2.20.0
+torch=2.12.0
+torchvision=0.27.0
+tqdm==4.68.2
 ```
 
 <h2> Data Preparation </h2>
@@ -122,7 +138,102 @@ python pku_gendata.py
 
 <h2> Pre-training and Linear Evaluation Protocol (LEP) </h2>
 
-The general command for training can be seen  below:
+<h3> Results (1) - Main Result for Comparison against SOTA </h3>
+
+Below are the results that we have reported in our paper, averaged for 5 runs.
+
+| NTU XSub | NTU XView | NTU 120 XSub | NTU 120 XSet | PKU Phase I | PKU Phase II |
+|:--------:|:---------:|:------------:|:------------:|:-----------:|:------------:|
+|   84.6   |   91.3    |     70.5     |     74.8     |    89.0     |     54.7     |
+
+
+Note reproducing these results may take a substantial amount of time if pre-training from scratch. We would recommend using the pre-trained weights provided.
+
+To fully pre-train the model from scratch 5 times in a row, please run the following commands on the terminal:
+
+```commandline
+bash train_ntu_xsub.sh
+bash train_ntu_xview.sh
+bash train_ntu120_xsub.sh
+bash train_ntu120_xset.sh
+bash train_pku_v1.sh
+bash train_pku_v2.sh
+```
+
+<h3> Results (2) - Main Results for Efficiency Comparison </h3>
+
+| Accuracy (%) | Pre-train Duration (hr) | Inference Duration (hr) | Parameters (M) | Pre-train VRAM Used (GB) | LEP VRAM Used (GB) |
+|:------------:|:--------------:|:------------:|:------------:|:-----------:|:------------:|
+|     84.6     |     10.6     | 2.88 | 8.0784 | 6.5 | 5.7 |
+
+The results obtained here were done using an NVIDIA A100 SXM4 80GB GPU. These are the only results that require the NVIDIA A100 SXM4 80GB GPU.
+
+To obtain this result, we timed the duration needed for pre-training and linear evaluation protocol. This can be done using the following script.
+
+```commandline
+bash train_duration.sh
+```
+
+While the training script is running, we monitor the VRAM usage using nvidia-smi during pre-training and LEP.
+```commandline
+nvidia-smi -l 1
+```
+
+To obtain the parameters we run the following script.
+```commandline
+python model_parameters.py
+```
+
+<h3> Results (3) - Ablation Study for value of t_m </h3>
+
+| $t_m$ | NTU 60 XSub | NTU 120 XSub | PKU II | Embeddings per Activity | Pre-training VRAM Used (GB) | LEP VRAM Used (GB) |
+|---|---|---|---|---|---|---|
+| 8 | **84.7** | 68.5 | 52.9 | 360 | 14.4 | 13.2 |
+| 10 | **84.7** | 69.8 | 54.0 | 288 | 10.4 | 9.5 |
+| 12 | **84.7** | 70.5 | 54.0 | 240 | 8.1 | 7.5 |
+| 15 | 84.6 | 70.5 | **54.7** | 192 | 6.7 | 5.9 |
+| 20 | 84.4 | **70.7** | 53.8 | **144** | **5.2** | **4.4** |
+
+To reproduce the results for all values of t_m in this table except 15 by pre-training it from scratch, please use the following commands:
+```commandline
+bash train_t_m_8.sh
+bash train_t_m_10.sh
+bash train_t_m_12.sh
+bash train_t_m_20.sh
+```
+
+<h3> Results (4) - Ablation Study for Positional Encoding </h3>
+
+| Combination  | No PE | Encoder PE | Decoder PE | Encoder and Decoder PE | 
+|:------------:|:-----:|:----------:|:----------:|:----------------------:|
+| **Accuracy (%)** | 47.4  |    45.9    |    **54.7**    |          54.1          |
+
+To reproduce the results for this ablation study (except Decoder PE as it can be obtained from the previous experiments) from scratch, please use the following commands:
+```commandline
+bash train_pku_v2_no_pe.sh
+bash train_pku_v2_enc_pe.sh
+bash train_pku_v2_encdec_pe.sh
+```
+
+<h3> Pre-trained Weights </h3>
+
+We have provided the best pre-trained weights for each dataset in this repository. We are currently working on adding the pre-trained weights for (3) and (4).
+
+To perform the Linear Evaluation Protocol for the results in (1) with the best pre-trained weights with 5 different seeds,
+please run the following commands on the terminal:
+
+```commandline
+bash pretrained_ntu_xsub.sh;
+bash pretrained_ntu_xview.sh;
+bash pretrained_ntu120_xsub.sh;
+bash pretrained_ntu120_xset.sh;
+bash pretrained_pku_v1.sh;
+bash pretrained_pku_v2.sh
+```
+
+<h3> General Command </h3>
+
+Otherwise, the general command for training can be seen below:
 
 ```bash
 python main.py --config ./config/{path-to-config}/{config}.yaml --seed {seed} --work-dir {work_dir} --weights-transformer-path {work_dir + final_weights/weights.pt} --train {train} --train-lep {train-lep}

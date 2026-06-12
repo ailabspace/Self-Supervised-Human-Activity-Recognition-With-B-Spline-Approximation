@@ -1,0 +1,5 @@
+python main.py --config ./config/ablation_study/no_pos_enc/pku_v2.yaml --seed 2021 --work-dir ./output_dir/pku_v2/no_pos_enc/runs/1/ --weights-transformer-path ./output_dir/pku_v2/no_pos_enc/runs/1/final_weights/weights.pt ;
+python main.py --config ./config/ablation_study/no_pos_enc/pku_v2.yaml --seed 2022 --work-dir ./output_dir/pku_v2/no_pos_enc/runs/2/ --weights-transformer-path ./output_dir/pku_v2/no_pos_enc/runs/2/final_weights/weights.pt ;
+python main.py --config ./config/ablation_study/no_pos_enc/pku_v2.yaml --seed 2023 --work-dir ./output_dir/pku_v2/no_pos_enc/runs/3/ --weights-transformer-path ./output_dir/pku_v2/no_pos_enc/runs/3/final_weights/weights.pt ;
+python main.py --config ./config/ablation_study/no_pos_enc/pku_v2.yaml --seed 2024 --work-dir ./output_dir/pku_v2/no_pos_enc/runs/4/ --weights-transformer-path ./output_dir/pku_v2/no_pos_enc/runs/4/final_weights/weights.pt ;
+python main.py --config ./config/ablation_study/no_pos_enc/pku_v2.yaml --seed 2025 --work-dir ./output_dir/pku_v2/no_pos_enc/runs/5/ --weights-transformer-path ./output_dir/pku_v2/no_pos_enc/runs/5/final_weights/weights.pt ;
