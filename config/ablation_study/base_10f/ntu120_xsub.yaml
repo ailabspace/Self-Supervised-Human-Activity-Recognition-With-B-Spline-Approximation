@@ -60,7 +60,7 @@ model_args:
   t_m: 10
   body_avg: False
 
-work_dir: ./output_dir/ntu120_xsub/fragmented_segments_10f_cnn_trial/
+work_dir: ./output_dir/ntu120_xsub/base_10f/
 
 # pretraining
 batch_size_pretrain: 128
@@ -71,7 +71,7 @@ eta_min_pretrain: 5e-4
 weight_decay_pretrain: 0.05
 mask_ratio: 0.8
 
-weights_transformer_path: ./output_dir/ntu120_xsub/fragmented_segments_10f_cnn_trial/final_weights/weights.pt # ./output_dir/ntu_xsub/final_weights/weights.pt
+weights_transformer_path: ./output_dir/ntu120_xsub/base_10f/final_weights/weights.pt # ./output_dir/ntu_xsub/final_weights/weights.pt
 
 # lep
 batch_size_lep: 64
