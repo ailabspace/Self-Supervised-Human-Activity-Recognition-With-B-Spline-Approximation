@@ -140,7 +140,7 @@ python pku_gendata.py
 
 <h3> Results (1) - Main Result for Comparison against SOTA </h3>
 
-Below are the results that we have reported in our paper, averaged for 5 runs.
+Below are the accuracies for each dataset that we have reported in our paper, averaged for 5 runs.
 
 | NTU XSub | NTU XView | NTU 120 XSub | NTU 120 XSet | PKU Phase I | PKU Phase II |
 |:--------:|:---------:|:------------:|:------------:|:-----------:|:------------:|
@@ -217,7 +217,7 @@ bash train_pku_v2_encdec_pe.sh
 
 <h3> Pre-trained Weights </h3>
 
-We have provided the best pre-trained weights for each dataset in this repository. We are currently working on adding the pre-trained weights for (3) and (4).
+We have provided the best pre-trained weights for each dataset in this repository.
 
 To perform the Linear Evaluation Protocol for the results in (1) with the best pre-trained weights with 5 different seeds,
 please run the following commands on the terminal:
@@ -229,6 +229,25 @@ bash pretrained_ntu120_xsub.sh;
 bash pretrained_ntu120_xset.sh;
 bash pretrained_pku_v1.sh;
 bash pretrained_pku_v2.sh
+```
+
+To perform the Linear Evaluation Protocol for the results in (3), excluding t_m = 15, with the best pre-trained weights 
+with 5 different seeds, please run the following commands on the terminal:
+
+```commandline
+bash pretrained_t_m_8.sh;
+bash pretrained_t_m_10.sh;
+bash pretrained_t_m_12.sh;
+bash pretrained_t_m_20.sh
+```
+
+To perform the Linear Evaluation Protocol for the results in (4), excluding Decoder Positional Encoding (Decoder PE) 
+with the best-pretrained weights with 5 different seeds, please  run the following commands on the terminal:
+
+```commandline
+bash pretrained_pku_v2_enc_pe.sh;
+bash pretrained_pku_v2_encdec_pe.sh;
+bash pretrained_pku_v2_no_pe.sh
 ```
 
 <h3> General Command </h3>
